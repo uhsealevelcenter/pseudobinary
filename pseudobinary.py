@@ -1,0 +1,91 @@
+
+import struct
+import binascii
+
+def pb2dec(b):
+    bits = len(b) * 6
+    yy = ''
+    for d in range(0,len(b)):
+        dd = ord(b[d])
+        if dd > 63 : dd -= 64
+        yy += bin(dd)[2:].zfill(6)
+    val = int(yy,2)
+    # compute the 2's complement of int value val
+    if (val & (1 << (bits - 1))) != 0: # if sign bit is set e.g., 8bit: 128-255
+        val = val - (1 << bits)        # compute negative value
+    return val                         # return positive value as is
+
+class pseudobinary:
+    def __init__(self,data = None):
+        self.load(data)
+
+    def load(self,data):
+        self.entire_msg = data
+        self.unpack()
+
+    def unpack(self):
+        bar = []
+        if self.entire_msg:
+            l = len(self.entire_msg)
+            nmsg = self.entire_msg.count('+')
+            m = self.entire_msg
+        else:
+            self.block_identifier = 'Z'
+
+        self.block_identifier   = m[0]     # type is B, C, or D
+        self.group_id           = m[1]     # 1=scheduled, 2=alarm, 3=forced, 4=retx
+
+        # All the sensor data 
+        msgs = m[2:-2].split('+')
+        # print(len(vals))
+        # Message block
+        # for d in range(0,int(len(vals)/3)):
+        for msg in range(1,nmsg+1):
+#            print(msgs[msg])
+#             print(decodePBC(msgs[msg]))
+             bar.append(decodePBC(msgs[msg]))
+
+#            self.msg_delimiter      = m[2]     # Should be +
+#            self.measurement_index  = pb2dec(m[3])     # Index 1-16
+#            self.msg_day            = pb2dec(m[4:6])   # Julian day
+#            self.msg_time           = pb2dec(m[6:8])   # Minute of day of tx
+#            self.msg_interval       = pb2dec(m[8:10])  # Interval between measurements
+        self.batt           = pb2dec(m[-1])*0.234+10.6      # battery voltage
+        self.data = bar
+#        print(bar)
+
+def decodePBC(c):
+    y = []
+    y.append(pb2dec(c[0]))   # index
+    y.append(pb2dec(c[1:3])) # jd
+    y.append(pb2dec(c[3:5])) # min of day
+    y.append(pb2dec(c[5:7])) # sensor interval
+    vals = c[7:]
+#    print (vals)
+    for d in range(0,int(len(vals)/3)):
+        y.append(pb2dec(vals[d*3:d*3+3]))
+    return y
+
+def testjig():
+
+    testmsg = 'C1+ACPA]@A@SR@SR@SR@SR@SR+BCPA]@A@di@di@di@di@di+CCPA\@E@v@+DCP@|@|+ECPAZ@|@@|+FCPAY@O@Ax.L'
+    testmsg = 'C1+ACP@~@A@SR@SR@SR@SR+BCP@~@A@di@di@di@di+CCP@~@E@v@+DCP@|@|@@@+ECP@^@|+FCP@{@O@Ax.K'
+    M = pseudobinary(testmsg)
+    M.unpack()
+
+#    print('orig msg: ' + testmsg)
+    print(M.block_identifier)
+#    print(M.msg_delimiter)
+#    print(M.measurement_index)
+#    print(M.msg_day)
+#    print(M.msg_time)
+#    print(M.msg_interval)
+    print(M.data)
+    print(M.batt)
+
+
+# == MAIN ==
+if __name__ == '__main__':
+    testjig()
+
+
