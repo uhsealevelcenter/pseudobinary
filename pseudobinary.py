@@ -27,7 +27,7 @@ class pseudobinary:
         bar = []
         if self.entire_msg:
             l = len(self.entire_msg)
-            nmsg = self.entire_msg.count('+')
+            #nmsg = self.entire_msg.count('+')
             m = self.entire_msg
         else:
             self.block_identifier = 'Z'
@@ -35,24 +35,43 @@ class pseudobinary:
         self.block_identifier   = m[0]     # type is B, C, or D
         self.group_id           = m[1]     # 1=scheduled, 2=alarm, 3=forced, 4=retx
 
-        # All the sensor data 
-        msgs = m[2:-2].split('+')
         # print(len(vals))
         # Message block
         # for d in range(0,int(len(vals)/3)):
-        for msg in range(1,nmsg+1):
-#            print(msgs[msg])
-#             print(decodePBC(msgs[msg]))
-             bar.append(decodePBC(msgs[msg]))
 
-#            self.msg_delimiter      = m[2]     # Should be +
-#            self.measurement_index  = pb2dec(m[3])     # Index 1-16
-#            self.msg_day            = pb2dec(m[4:6])   # Julian day
-#            self.msg_time           = pb2dec(m[6:8])   # Minute of day of tx
-#            self.msg_interval       = pb2dec(m[8:10])  # Interval between measurements
+        if self.block_identifier == 'B':
+            msgs = m[3:-1]
+            nmsg = len(msgs)/3
+#            print(nmsg)
+#            for msg in range(1,int(nmsg+1)):
+            print(msgs)
+            for i in range(0,int(nmsg)):
+#                 print('BT' + str(msg))
+                 msg = msgs[i*3:(i*3)+3]
+                 bar.append(decodePBB(msg))
+
+        if self.block_identifier == 'C':
+            # All the sensor data 
+            msgs = m[2:-2].split('+')
+            nmsg = self.entire_msg.count('+')
+            for msg in range(1,nmsg+1):
+#                 print(msgs[msg])
+#                 print(decodePBC(msgs[msg]))
+                 bar.append(decodePBC(msgs[msg]))
+
         self.batt           = pb2dec(m[-1])*0.234+10.6      # battery voltage
         self.data = bar
 #        print(bar)
+
+def decodePBB(c):
+    y = []
+    vals = c
+    for d in range(0,int(len(vals)/3)):
+        y.append(pb2dec(vals[d*3:d*3+3]))
+    return y
+ 
+
+
 
 def decodePBC(c):
     y = []
@@ -70,8 +89,10 @@ def testjig():
 
     testmsg = 'C1+ACPA]@A@SR@SR@SR@SR@SR+BCPA]@A@di@di@di@di@di+CCPA\@E@v@+DCP@|@|+ECPAZ@|@@|+FCPAY@O@Ax.L'
     testmsg = 'C1+ACP@~@A@SR@SR@SR@SR+BCP@~@A@di@di@di@di+CCP@~@E@v@+DCP@|@|@@@+ECP@^@|+FCP@{@O@Ax.K'
+    testmsg = 'B1@@Gt@Gs@Sx@Sr@@i@@iI'
+
     M = pseudobinary(testmsg)
-    M.unpack()
+#    M.unpack()
 
 #    print('orig msg: ' + testmsg)
     print(M.block_identifier)
