@@ -32,14 +32,17 @@ class pseudobinary:
         else:
             self.block_identifier = 'Z'
 
-        self.block_identifier   = m[0]     # type is B, C, or D
-        self.group_id           = m[1]     # 1=scheduled, 2=alarm, 3=forced, 4=retx
+        self.block_identifier   = m[0]     # type is B, 2, C, or D
+
+        # this isnt right anymore because type2 random from above doesnt have a m[1]
+        # self.group_id           = m[1]     # 1=scheduled, 2=alarm, 3=forced, 4=retx
 
         # print(len(vals))
         # Message block
         # for d in range(0,int(len(vals)/3)):
 
         if self.block_identifier == 'B':
+            self.group_id           = m[1]     # 1=scheduled, 2=alarm
             msgs = m[3:-1]
             nmsg = len(msgs)/3
 #            print(nmsg)
@@ -49,8 +52,24 @@ class pseudobinary:
 #                 print('BT' + str(msg))
                  msg = msgs[i*3:(i*3)+3]
                  bar.append(decodePBB(msg))
+            self.random_count = 0
+
+# 2ANr}SGI
+        if self.block_identifier == '2':
+            self.group_id           = 6     # 6=random
+            msgs = m[2:-3]
+            nmsg = len(msgs)/3
+            print(msgs)
+            for i in range(0,int(nmsg)):
+                 msg = msgs[i*3:(i*3)+3]
+                 bar.append(decodePBB(msg))
+            rcnt = m[-3:-1]
+            # print(rcnt)
+            self.random_count = pb2dec(rcnt)
+
 
         if self.block_identifier == 'C':
+            self.group_id           = m[1]     # 1=scheduled, 2=alarm, 3=forced, 4=retx
             # All the sensor data 
             msgs = m[2:-2].split('+')
             nmsg = self.entire_msg.count('+')
@@ -58,6 +77,7 @@ class pseudobinary:
 #                 print(msgs[msg])
 #                 print(decodePBC(msgs[msg]))
                  bar.append(decodePBC(msgs[msg]))
+            self.random_count = 0
 
         self.batt           = pb2dec(m[-1])*0.234+10.6      # battery voltage
         self.data = bar
@@ -71,8 +91,6 @@ def decodePBB(c):
     return y
  
 
-
-
 def decodePBC(c):
     y = []
     y.append(pb2dec(c[0]))   # index
@@ -85,11 +103,13 @@ def decodePBC(c):
         y.append(pb2dec(vals[d*3:d*3+3]))
     return y
 
+
 def testjig():
 
     testmsg = 'C1+ACPA]@A@SR@SR@SR@SR@SR+BCPA]@A@di@di@di@di@di+CCPA\@E@v@+DCP@|@|+ECPAZ@|@@|+FCPAY@O@Ax.L'
     testmsg = 'C1+ACP@~@A@SR@SR@SR@SR+BCP@~@A@di@di@di@di+CCP@~@E@v@+DCP@|@|@@@+ECP@^@|+FCP@{@O@Ax.K'
     testmsg = 'B1@@Gt@Gs@Sx@Sr@@i@@iI'
+    testmsg = 'B1A@^k@^k@^i@^h@^i@^h@^g@^g@^i@^g@^d@^d@^d@^e@^b@^d@^d@^b@^`@^b@^c@^_@^_@^aH'
 
     M = pseudobinary(testmsg)
 #    M.unpack()
