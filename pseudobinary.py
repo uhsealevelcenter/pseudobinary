@@ -47,11 +47,11 @@ class pseudobinary:
             nmsg = len(msgs)/3
 #            print(nmsg)
 #            for msg in range(1,int(nmsg+1)):
-            print(msgs)
+            #print(msgs)
             for i in range(0,int(nmsg)):
 #                 print('BT' + str(msg))
                  msg = msgs[i*3:(i*3)+3]
-                 bar.append(decodePBB(msg))
+                 bar.append(pb2dec(msg))
             self.random_count = 0
 
 # 2ANr}SGI
@@ -59,10 +59,10 @@ class pseudobinary:
             self.group_id           = 6     # 6=random
             msgs = m[2:-3]
             nmsg = len(msgs)/3
-            print(msgs)
+            #print(msgs)
             for i in range(0,int(nmsg)):
                  msg = msgs[i*3:(i*3)+3]
-                 bar.append(decodePBB(msg))
+                 bar.append(pb2dec(msg))
             rcnt = m[-3:-1]
             # print(rcnt)
             self.random_count = pb2dec(rcnt)
