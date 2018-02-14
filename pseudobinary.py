@@ -43,6 +43,7 @@ class pseudobinary:
 
         if self.block_identifier == 'B':
             self.group_id           = m[1]     # 1=scheduled, 2=alarm
+            self.offset = pb2dec(m[2])
             msgs = m[3:-1]
             nmsg = len(msgs)/3
 #            print(nmsg)
@@ -57,6 +58,7 @@ class pseudobinary:
 # 2ANr}SGI
         if self.block_identifier == '2':
             self.group_id           = 6     # 6=random
+            self.offset = pb2dec(m[1])
             msgs = m[2:-3]
             nmsg = len(msgs)/3
             #print(msgs)
