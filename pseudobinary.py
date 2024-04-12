@@ -112,6 +112,10 @@ def testjig():
     testmsg = 'C1+ACP@~@A@SR@SR@SR@SR+BCP@~@A@di@di@di@di+CCP@~@E@v@+DCP@|@|@@@+ECP@^@|+FCP@{@O@Ax.K'
     testmsg = 'B1@@Gt@Gs@Sx@Sr@@i@@iI'
     testmsg = 'B1A@^k@^k@^i@^h@^i@^h@^g@^g@^i@^g@^d@^d@^d@^e@^b@^d@^d@^b@^`@^b@^c@^_@^_@^aH'
+    testmsg = 'C1+ACPA]@A@SR@SR@SR@SR@SR+BCPA]@A@di@di@di@di@di+CCPA\@E@v@+DCP@|@|+ECPAZ@|@@|+FCPAY@O@Ax.L'
+    testmsg = 'C1+ABqKP@E@SR@SR@SR@SR@SR@SR@SR@SR@SR@SR@SR@SR@SR@SR@SR@SR@SR@SR@SR@SR@SR@SR@SR@SR@SR@SR@SR@SR@SR@SR@SR@SR@SR@SR@SR@SR.'
+    testmsg = r'B1B@\o@\p@\r@\t@\t@\v@\x@\z@\|@\}@\?@]A@]C@]D@]F@]H@]J@]K@]M@]O@]P@]R@]T@]VI'
+    testmsg = 'B1B@VF@VG@VG@VH@VH@VI@VI@VJ@VJ@VJ@VK@VK@VK@VL@VL@VM@VM@VM@VN@VN@VN@VO@VO@VOI'
 
     M = pseudobinary(testmsg)
 #    M.unpack()
