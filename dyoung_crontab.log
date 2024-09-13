@@ -1,0 +1,11 @@
+### REMOVE LOCK FILE FROM RETRY FTP PROCESS ON SERVER REBOOT. ###
+@reboot (/bin/rm -f /home/iridium/retry_ftp.lock)
+
+### BACKUP CRONTAB. ###
+0 0 * * * crontab -l > /home/iridium/bin/dyoung_crontab.log
+
+### HOURLY PROCESS TO RETRY FAILED IRIDIUM FTP UPLOADS TO AOML (FOR THE GTS). ###
+30 * * * * /home/dyoung/anaconda3/bin/python /home/iridium/bin/retry_ftp.py > /home/iridium/retry_ftp.log 2>&1
+
+### DAILY PROCESS TO TAR IRIDIUM AND CELL TXS OLDER THAN 1 MONTH TO PRESERVE INODES AND STORAGE. ###
+0 6 * * * /home/dyoung/pseudobinary/tar_raw_iridium_and_cell_txs.sh > /home/dyoung/logs/tar_raw_iridium_and_cell_txs.log 2>&1

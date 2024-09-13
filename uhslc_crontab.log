@@ -1,0 +1,8 @@
+### RESTART SOCKET FOR CELL TXS ON SERVER REBOOT. ###
+@reboot (sleep 180 && screen -dmS socket /home/socket/bin/start_server && /bin/rm -f /home/socket/retry_ftp.lock)
+
+### BACKUP CRONTAB. ###
+0 0 * * * crontab -l > /home/socket/bin/uhslc_crontab.log
+
+### HOURLY PROCESS TO RETRY FAILED CELL FTP UPLOADS TO AOML (FOR THE GTS). ###
+0 * * * * /home/uhslc/miniconda3/bin/python /home/socket/bin/retry_ftp.py > /home/socket/retry_ftp.log 2>&1
